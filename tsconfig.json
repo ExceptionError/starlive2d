@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "lib": ["dom", "ES2018"],
+        "strict": false,
+        "skipLibCheck": true,
+        "newLine": "lf",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "moduleResolution": "Node",
+        "paths": {
+            "@cubism/*": ["../cubism/src/*"]
+        },
+    },
+    "include": [
+        "src/**/*",
+        "type/*.d.ts",
+        "../Core/live2dcubismcore.d.ts",
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
