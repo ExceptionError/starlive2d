@@ -4,6 +4,8 @@ Live2D モデルを読み込むためのフレームワークです。
 
 WebGL 版と Pixi 版を用意しています。
 
+これを利用したサンプル実装は [こちら](https://github.com/ExceptionError/starlive2d-demo)
+
 ## セットアップ
 
 1. [Live2D 公式の SDK](https://www.live2d.com/download/cubism-sdk/download-web/) をダウンロードする
