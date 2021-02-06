@@ -17,7 +17,16 @@ import { CubismRenderer_WebGL } from '@cubism/rendering/cubismrenderer_webgl';
 import { csmMap } from '@cubism/type/csmmap';
 import { csmVector } from '@cubism/type/csmvector';
 import { MIPMAP_MODES, Texture as PixiTexture } from 'pixi.js';
-import { Source, Texture, Model, MotionsMap, ExpressionMap } from '../model';
+import {
+  Source,
+  Texture,
+  Model,
+  MotionsMap,
+  ExpressionMap,
+  MotionSoundsMap,
+} from '../model';
+import { SoundManager } from '../sound';
+import { Lipsync } from '../utils';
 
 /**
  * 生成オプション
@@ -28,6 +37,18 @@ export interface ModelFactoryOptions {
    * 読み込むモデルによってはノイズの原因となるのでその際にfalseを指定する
    */
   mipmap?: boolean;
+  /**
+   * モーションに紐づけられているサウンドを再生するか(default: false)
+   */
+  motionWithSound?: boolean;
+  /**
+   * リップシンクの利用(default: Off)
+   */
+  lipSync?: Lipsync.Type;
+  /**
+   * リップシンクのウェイト(default: 0.8)
+   */
+  lipSyncWeight?: number;
   /**
    * PixiModelを利用する処理に切り替えるか(default: false)
    * テクスチャ回りの仕組みを良い感じにできなかったので用意されたオプション
@@ -125,6 +146,7 @@ export class ModelFactory {
       moc,
       expressions,
       motions,
+      motionSounds,
       physics,
       pose,
       userData,
@@ -133,6 +155,7 @@ export class ModelFactory {
       loadMoc(context),
       loadExpressions(context),
       loadMotions(context),
+      loadMotionSounds(context),
       loadPhysics(context),
       loadPose(context),
       loadUserData(context),
@@ -184,6 +207,11 @@ export class ModelFactory {
       });
     }
 
+    // サウンドマネージャーは自前実装
+    const soundManager = new SoundManager();
+    soundManager.lipSync = context.options.lipSync ?? Lipsync.Off;
+    const lipSyncWeight = context.options.lipSyncWeight ?? 0.8; // 0.8はLive2Dのサンプル実装でもされていた定数
+
     // 各種プロパティをモデルにセットする
     // 色々と試行錯誤するにあたって、ひとまず全部入っていれば困らないという形
     model.eyeBlink = eyeBlink;
@@ -196,6 +224,7 @@ export class ModelFactory {
     model.moc = moc;
     model.expressions = expressions;
     model.motions = motions;
+    model.motionSounds = motionSounds;
     model.physics = physics;
     model.pose = pose;
     model.userData = userData;
@@ -208,6 +237,9 @@ export class ModelFactory {
     model.renderer = renderer;
 
     model.cubismModelSetting = cubismSetting;
+
+    model.soundManager = soundManager;
+    model.lipSyncWeight = lipSyncWeight;
 
     return Promise.resolve(model);
   }
@@ -395,6 +427,33 @@ const loadMotions = async (
       // マップに追加する
       const k = `${key}_${index}`;
       map[k] = mtn;
+    });
+  });
+  return map;
+};
+
+/**
+ * モーションサウンドデータの読み込み
+ * @param context
+ */
+const loadMotionSounds = async (
+  context: ModelFactoryContext
+): Promise<MotionSoundsMap> => {
+  if (context.options.motionWithSound !== true) return {};
+  const motions = context.setting.FileReferences.Motions;
+  if (!motions) return {};
+
+  const map: MotionSoundsMap = {};
+  Object.entries(motions).forEach(async ([key, motions]) => {
+    motions.forEach(async (motion, index) => {
+      // マップに追加する
+      if (motion.Sound) {
+        const k = `${key}_${index}`;
+        const url = `${context.dir}/${motion.Sound}`;
+        map[k] = url;
+        // そのまま利用するわけではないがキャッシュするためここで取得する
+        await fetch(url);
+      }
     });
   });
   return map;

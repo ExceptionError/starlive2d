@@ -24,8 +24,16 @@ import { csmMap } from '@cubism/type/csmmap';
 import { csmVector } from '@cubism/type/csmvector';
 
 import { ModelFactory, ModelFactoryOptions } from '../factory';
+import { SoundManager } from '../sound';
 import { Priority } from '../utils';
-import { ExpressionMap, MotionsMap, Source, Texture, Viewport } from './type';
+import {
+  ExpressionMap,
+  MotionsMap,
+  MotionSoundsMap,
+  Source,
+  Texture,
+  Viewport,
+} from './type';
 
 /**
  * ベースモデル
@@ -56,6 +64,7 @@ export class Model {
   public moc: CubismMoc;
   public expressions: ExpressionMap;
   public motions: MotionsMap;
+  public motionSounds: MotionSoundsMap;
   public physics: CubismPhysics | null;
   public pose: CubismPose | null;
   public userData: CubismModelUserData | null;
@@ -68,6 +77,9 @@ export class Model {
   public renderer: CubismRenderer_WebGL;
 
   public cubismModelSetting: CubismModelSettingJson;
+
+  public soundManager: SoundManager;
+  public lipSyncWeight: number;
 
   /**
    * Lie2Dモデルとして更新する
@@ -114,11 +126,13 @@ export class Model {
     }
 
     // リップシンクの設定
-    // TODO: 音声再生で取得できる音量[0...1.0]をここで設定することで口パクができる
-    const value = 0;
+    const value = this.soundManager.lipSyncValue;
     for (let i = 0; i < this.lipSyncIds.getSize(); ++i) {
-      // 0.8はLive2Dのサンプル実装でもされていた定数
-      this.cubismModel.addParameterValueById(this.lipSyncIds.at(i), value, 0.8);
+      this.cubismModel.addParameterValueById(
+        this.lipSyncIds.at(i),
+        value,
+        this.lipSyncWeight
+      );
     }
 
     // ポーズの設定
@@ -244,6 +258,12 @@ export class Model {
 
     if (onFinishedMotionHandler) {
       motion.setFinishedMotionHandler(onFinishedMotionHandler);
+    }
+
+    // モーションにサウンドを紐づけられるのでそれを再生
+    const motionSoundFileName = this.motionSounds[name];
+    if (motionSoundFileName) {
+      this.soundManager.playSound(motionSoundFileName);
     }
 
     return this.cubismMotionManager.startMotionPriority(

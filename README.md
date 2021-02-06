@@ -32,7 +32,6 @@ WebGL 版と Pixi 版を用意しています。
 ## TODO/issue
 
 - PixiModel にて filter を指定するとモデルが描画されなくなる
-- 音声再生とリップシンクを実装したい
 
 ## 参考
 

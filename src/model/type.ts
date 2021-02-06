@@ -12,4 +12,8 @@ export type ExpressionMap = { [key: string]: ACubismMotion };
 /**
  * モーションのマップ
  */
-export type MotionsMap = { [k: string]: CubismMotion };
+export type MotionsMap = { [key: string]: CubismMotion };
+/**
+ * モーションサウンドのマップ
+ */
+export type MotionSoundsMap = { [key: string]: string };
