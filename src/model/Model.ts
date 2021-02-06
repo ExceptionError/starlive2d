@@ -198,7 +198,7 @@ export class Model {
    */
   public startRandomMotion(
     group: string,
-    priority: number,
+    priority: Priority,
     onFinishedMotionHandler?: FinishedMotionCallback
   ): CubismMotionQueueEntryHandle {
     const motionCount = this.cubismModelSetting.getMotionCount(group);
@@ -215,7 +215,7 @@ export class Model {
    * @param onFinishedMotionHandler
    */
   public startRandomRandomMotion(
-    priority: number,
+    priority: Priority,
     onFinishedMotionHandler?: FinishedMotionCallback
   ): CubismMotionQueueEntryHandle {
     const motionGroupCount = this.cubismModelSetting.getMotionGroupCount();
@@ -237,7 +237,7 @@ export class Model {
   public startMotion(
     group: string,
     no: number,
-    priority: number,
+    priority: Priority,
     onFinishedMotionHandler?: FinishedMotionCallback
   ): CubismMotionQueueEntryHandle {
     if (priority === Priority.Force) {

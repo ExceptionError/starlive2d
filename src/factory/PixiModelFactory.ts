@@ -1,7 +1,7 @@
 import { Model } from '../model';
 import { PixiModel } from '../model/PixiModel';
 import { Source } from '../model/type';
-import { ModelFactoryOptions } from './ModelFactory';
+import { ModelFactoryOptions } from './ModelFactoryOptions';
 
 /**
  * Pixiモデルファクトリ

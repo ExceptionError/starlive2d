@@ -1,10 +1,11 @@
 /**
  * 表情やモーションの優先度
  */
-export namespace Priority {
-  export type Type = typeof None | typeof Idle | typeof Normal | typeof Force;
-  export const None = 0;
-  export const Idle = 1;
-  export const Normal = 2;
-  export const Force = 3;
-}
+export const Priority = {
+  None: 0,
+  Idle: 1,
+  Normal: 2,
+  Force: 3,
+} as const;
+
+export type Priority = typeof Priority[keyof typeof Priority];

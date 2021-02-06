@@ -53,7 +53,7 @@ export class SoundManager {
     0.12,
   ];
 
-  public lipSync: Lipsync.Type = Lipsync.Off;
+  public lipSync: Lipsync = Lipsync.Off;
   public lipSyncValue: number = 0;
 
   public playSound(url: string): void {

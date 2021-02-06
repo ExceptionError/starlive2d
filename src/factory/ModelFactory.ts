@@ -27,62 +27,8 @@ import {
 } from '../model';
 import { SoundManager } from '../sound';
 import { Lipsync } from '../utils';
-
-/**
- * 生成オプション
- */
-export interface ModelFactoryOptions {
-  /**
-   * ミップマップを利用するか(default: true)
-   * 読み込むモデルによってはノイズの原因となるのでその際にfalseを指定する
-   */
-  mipmap?: boolean;
-  /**
-   * モーションに紐づけられているサウンドを再生するか(default: false)
-   */
-  motionWithSound?: boolean;
-  /**
-   * リップシンクの利用(default: Off)
-   */
-  lipSync?: Lipsync.Type;
-  /**
-   * リップシンクのウェイト(default: 0.8)
-   */
-  lipSyncWeight?: number;
-  /**
-   * PixiModelを利用する処理に切り替えるか(default: false)
-   * テクスチャ回りの仕組みを良い感じにできなかったので用意されたオプション
-   */
-  pixi?: boolean;
-}
-
-/**
- * 生成処理で引きまわすパラメータ
- */
-interface ModelFactoryContext {
-  /**
-   * Live2Dのレンダラと標準テクスチャの読み込みで必要
-   */
-  readonly gl: WebGLRenderingContext;
-  /**
-   * 最初に読み込むモデルのJSONにはそこからの相対パスでリソースが記述されている
-   * それらを読み込むためにそのディレクトリのパスが必要
-   */
-  readonly dir: string;
-  /**
-   * 最初に読み込んだモデルのJSONデータ
-   */
-  readonly setting: CubismSpec.ModelJSON;
-  /**
-   * 最初に読み込んだモデルのJSONデータをLive2Dのフレームワーク向けにしたもの
-   * こちらだけでも実装できるがJSONデータの構造が見えにくいので必要なところでのみ利用している
-   */
-  readonly cubismSetting: CubismModelSettingJson;
-  /**
-   * 生成オプション
-   */
-  readonly options: ModelFactoryOptions;
-}
+import { ModelFactoryContext } from './ModelFactoryContext';
+import { ModelFactoryOptions } from './ModelFactoryOptions';
 
 /**
  * 設定
@@ -260,7 +206,7 @@ const resolveSetting = async (
     data.url = source;
     return data;
   } else {
-    return (source as undefined) as Setting;
+    return (source as unknown) as Setting;
   }
 };
 
