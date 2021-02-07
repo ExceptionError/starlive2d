@@ -75,6 +75,17 @@ export class SoundManager {
     audio.play();
   }
 
+  public release(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+    if (this.audioElement) {
+      this.audioElement.volume = 0;
+      this.audioElement.pause();
+      this.audioElement = null;
+    }
+  }
+
   /**
    * 音量同期でのリップシンク
    * @param audio

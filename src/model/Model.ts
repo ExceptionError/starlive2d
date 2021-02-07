@@ -94,11 +94,16 @@ export class Model {
     // 状態の復元
     this.cubismModel.loadParameters();
     // モーションが継続中なら更新
-    if (!this.cubismMotionManager.isFinished()) {
-      motionUpdated = this.cubismMotionManager.updateMotion(
-        this.cubismModel,
-        deltaTimeSeconds
-      );
+    try {
+      if (!this.cubismMotionManager.isFinished()) {
+        motionUpdated = this.cubismMotionManager.updateMotion(
+          this.cubismModel,
+          deltaTimeSeconds
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      this.cubismMotionManager.stopAllMotions();
     }
     // 状態の保存
     this.cubismModel.saveParameters();
@@ -112,10 +117,15 @@ export class Model {
     }
 
     // 表情の更新
-    this.cubismExpressionManager.updateMotion(
-      this.cubismModel,
-      deltaTimeSeconds
-    );
+    try {
+      this.cubismExpressionManager.updateMotion(
+        this.cubismModel,
+        deltaTimeSeconds
+      );
+    } catch (error) {
+      console.log(error);
+      this.cubismExpressionManager.stopAllMotions();
+    }
 
     // 呼吸の更新
     this.breath.updateParameters(this.cubismModel, deltaTimeSeconds);
@@ -162,6 +172,46 @@ export class Model {
       viewport
     );
     this.renderer.drawModel();
+  }
+
+  /**
+   * デストラクタ相当の処理
+   */
+  public release(): void {
+    this.eyeBlink = null;
+    this.breath = null;
+    this.eyeBlinkIds.clear();
+    this.lipSyncIds.clear();
+    this.layout.release();
+
+    this.textures = [];
+    this.moc.deleteModel(this.cubismModel);
+    this.moc.release();
+    Object.entries(this.expressions).map((expression) => {
+      expression[1].release();
+    });
+    this.expressions = {};
+    Object.entries(this.motions).map((motion) => {
+      motion[1].release();
+    });
+    this.motions = {};
+    this.motionSounds = {};
+    this.physics?.release();
+    this.pose = null;
+    this.userData?.release();
+
+    // this.cubismModel.release(); // moc.deleteModelが内部で呼んでる
+    this.cubismModelMatrix = null;
+    this.cubismMotionManager.stopAllMotions();
+    this.cubismMotionManager.release();
+    this.cubismExpressionManager.stopAllMotions();
+    this.cubismExpressionManager.release();
+    this.cubismTargetPoint = null;
+    this.renderer.release();
+
+    this.cubismModelSetting.release();
+
+    this.soundManager.release();
   }
 
   /**

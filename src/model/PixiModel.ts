@@ -41,6 +41,13 @@ export class PixiModel extends Container {
     // Pixiのレンダラとの兼ね合いでここでは経過時間の保存だけ行う
     this.dt += dt;
   }
+  /**
+   * デストラクタ相当の処理
+   */
+  public release(): void {
+    this.baseModel.release();
+    this.destroy();
+  }
 
   /**
    * Pixiのレンダリング処理
