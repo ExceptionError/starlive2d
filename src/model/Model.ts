@@ -1,7 +1,7 @@
-import { CubismModelSettingJson } from '@cubism/cubismmodelsettingjson';
 import { CubismBreath } from '@cubism/effect/cubismbreath';
 import { CubismEyeBlink } from '@cubism/effect/cubismeyeblink';
 import { CubismPose } from '@cubism/effect/cubismpose';
+import { ICubismModelSetting } from '@cubism/icubismmodelsetting';
 import { CubismIdHandle } from '@cubism/id/cubismid';
 import { CubismMatrix44 } from '@cubism/math/cubismmatrix44';
 import { CubismModelMatrix } from '@cubism/math/cubismmodelmatrix';
@@ -76,7 +76,7 @@ export class Model {
   public cubismTargetPoint: CubismTargetPoint;
   public renderer: CubismRenderer_WebGL;
 
-  public cubismModelSetting: CubismModelSettingJson;
+  public cubismModelSetting: ICubismModelSetting;
 
   public soundManager: SoundManager;
   public lipSyncWeight: number;
@@ -209,7 +209,7 @@ export class Model {
     this.cubismTargetPoint = null;
     this.renderer.release();
 
-    this.cubismModelSetting.release();
+    this.cubismModelSetting = null;
 
     this.soundManager.release();
   }

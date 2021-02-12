@@ -1,4 +1,4 @@
-import { CubismModelSettingJson } from '@cubism/cubismmodelsettingjson';
+import { ICubismModelSetting } from '@cubism/icubismmodelsetting';
 import { ModelFactoryOptions } from './ModelFactoryOptions';
 
 /**
@@ -22,7 +22,7 @@ export interface ModelFactoryContext {
    * 最初に読み込んだモデルのJSONデータをLive2Dのフレームワーク向けにしたもの
    * こちらだけでも実装できるがJSONデータの構造が見えにくいので必要なところでのみ利用している
    */
-  readonly cubismSetting: CubismModelSettingJson;
+  readonly cubismSetting: ICubismModelSetting;
   /**
    * 生成オプション
    */

@@ -1,5 +1,4 @@
 import { CubismDefaultParameterId } from '@cubism/cubismdefaultparameterid';
-import { CubismModelSettingJson } from '@cubism/cubismmodelsettingjson';
 import { BreathParameterData, CubismBreath } from '@cubism/effect/cubismbreath';
 import { CubismEyeBlink } from '@cubism/effect/cubismeyeblink';
 import { CubismPose } from '@cubism/effect/cubismpose';
@@ -18,6 +17,7 @@ import { csmMap } from '@cubism/type/csmmap';
 import { csmVector } from '@cubism/type/csmvector';
 import { MIPMAP_MODES, Texture as PixiTexture } from 'pixi.js';
 import {
+  CubismModelSetting,
   Source,
   Texture,
   Model,
@@ -61,14 +61,7 @@ export class ModelFactory {
     const url = setting.url;
     const dir = url.split('/').slice(0, -1).join('/');
 
-    // Live2D向けにArrayBufferに変換して渡してあげる
-    // そのクラス内で自前のパーサーで評価しなおされており、マルチバイト文字に非対応だったりと悲しい
-    const json = JSON.stringify(setting);
-    const arrayBuffer = stringToBuffer(json);
-    const cubismSetting = new CubismModelSettingJson(
-      arrayBuffer,
-      arrayBuffer.byteLength
-    );
+    const cubismSetting = new CubismModelSetting(setting);
 
     const context: ModelFactoryContext = {
       gl,
